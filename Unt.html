@@ -1,28 +1,18 @@
-<!DOCTYPE html>
-<html>
 <body>
-  <h2>音檔測試</h2>
-  <p id="status">載入中...</p>
-  <audio controls preload="auto" id="audioPlayer">
-    <source src="/mp3/001.mp3" type="audio/mpeg">
-    您的瀏覽器不支援 audio 標籤。
-  </audio>
+  <button onclick="addAudio()">➕ 加入音檔</button>
+  <div id="zone"></div>
 
   <script>
-    const audio = document.getElementById('audioPlayer');
-    const status = document.getElementById('status');
+    function addAudio() {
+      const audio = document.createElement('audio');
+      audio.controls = true;
+      audio.preload = 'auto';
+      const source = document.createElement('source');
+      source.src = 'mp3/001.mp3';
+      source.type = 'audio/mpeg';
+      audio.appendChild(source);
 
-    audio.addEventListener('canplaythrough', () => {
-      status.textContent = '✅ 音檔可播放';
-    });
-
-    audio.addEventListener('error', () => {
-      status.textContent = '❌ 音檔載入失敗';
-    });
-
-    audio.addEventListener('loadedmetadata', () => {
-      console.log('Metadata loaded.');
-    });
+      document.getElementById('zone').appendChild(audio);
+    }
   </script>
 </body>
-</html>
