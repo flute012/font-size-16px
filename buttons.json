@@ -1,0 +1,16 @@
+[
+  {
+    "lesson": "L1",
+    "block": "a1",
+    "type": "audio",
+    "label": "001.mp3 測試播放",
+    "src": "mp3/001.mp3"
+  },
+  {
+    "lesson": "L1",
+    "block": "a1",
+    "type": "audio",
+    "label": "002.mp3 測試播放",
+    "src": "mp3/002.mp3"
+  }
+]
