@@ -1,366 +1,296 @@
-/* 標題設定*/
 table {
-	margin: 1rem 0.1rem 1rem 0.5rem;
-}
-header {
-	margin: 0.5em 0.4em;
+  margin: 0.8rem 0 0 0.8rem;
 }
 
 .title-word {
-	padding: 0 0.1rem 0 0.8rem;
-	font-size: 2.8rem;
-	font-weight: 900;
-}
-.title-img {
-	height: 3.6rem;
-    padding: 0 0.3rem 0 0;
-    margin: 0.1rem 0;
+  font-size: 3.1rem;
+  font-weight: 900;
+  padding: 0 1rem;
+  color: #050505;
 }
 
-/* 中間內容*/
+.title-img {
+  width: 12rem;
+  padding-top: 0.15rem;
+}
+
 section {
-	display: inline-block;
-	width: 99.5%;
-    font-size: 2.2rem;
-    font-weight: 800;
-    padding:0 0.5rem 0 0.02rem;
+  display: inline-block;
+  width: 99.5%;
+  /* 上右下左*/
+  margin: 0.35vw 0vw 0.1vw 0vw;
+  font-weight: 700;
+}
+
+
+div {
+  margin-left: 0.45em;
+  margin-top: 0.15em;
+}
+
+p {
+  margin: 0.25em 0 0.3em 1.2em;
+  font-size: 2em;
+  font-weight: 550;
+  color: #303030;
+}
+
+strong {
+  color: #050505;
+  font-weight: 900;
+  margin-left: -0.45em;
+  font-size: 1.12em;
+}
+
+audio {
+  width: 97%;
+  padding: 0.22em;
+  margin: 0.1em 0.45em 0.2em 0.2em;
 }
 
 .banner {
-	color: #000000;
-	padding: 0.3rem 0.2rem 0.3rem 0.2rem;
-	margin: 0.05rem 0 0.5rem 0.6rem;
+  font-size: 2em;
+  color: #3E3D39;
+  max-width: calc(100% - 10px);
+  padding: 0.1em 0 0.1em 0.15em;
+  margin: 0.1em 0.3em 0.05em 0.2em;
 }
 
-div {
-	margin: 0.1em 0 0.1em 0.4em;
-	font-size: 2rem;
-    
-}
-p {
-	color: #282828;
-	font-weight: 600;
-	padding-left: 1rem;
-    margin-top:0.2rem;
-    margin-left:0.1rem;
-}
-audio {
-	width: 98%;
-	margin: 0.5rem 0 1rem 0.3rem;
-	padding: 0.2rem;
-}
-
-/* 一小段空白*/
-hr{
-  border: 0.6rem solid rgba(0,0,0,0.00);
-}
-
-
-/* 影片按鈕 */
 .bt {
-	margin: 0.2rem -0.5rem 0.6rem 1.5rem;
-	font-size: 1.5rem;
-	letter-spacing: 0.02rem;
-	border: 0.03rem rgba(205,205,205,1) solid;
-	width: 9rem;
-	height: 2.5rem;
-	background-color: #FFF3DC;
-	font-weight: bold;
-	border-radius: 0.3rem;
+  margin: 0.8rem -0.15rem 0.6rem 1.5rem;
+  border: 0.05rem solid #888a68;
+  font-size: 1.45em;
+  width: auto;
+  min-width:140px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  height: 40px;
+  background-color: #FFFFFf;
+  font-weight: bold;
+  color: #242424;
+  border-radius: 0.45rem;
+  box-shadow: -0.12rem -0.12rem 0 0.02rem #888a68;
 }
 
 .bt:hover {
-	background-color:rgba(251,226,168,1.00);
-    transition: all 0.2s linear;
-    border: 0.03em rgba(251,226,168,0.3) solid;
-}
-/* 聽力測驗 */
-.bt-LS {
-	margin: 0.4rem -0.5rem 0.6rem 1.2rem;
-	font-size: 1.55rem;
-	border: 0.03rem rgba(205,205,205,1) solid;
-	width: auto;
-	height: 2.8rem;
-	padding: 0.4rem 0.8rem 0.3rem;
-	background-color: #FFF3DC;
-	font-weight: bold;
-	border-radius: 0.3rem;
+  box-shadow: -0.05rem -0.05rem 0 0.035rem #dcdbdb;
+  border: 0.05rem solid #dcdbdb;
 }
 
-.bt-LS:hover {
-	background-color:rgba(255,240,145,0.5);
-    transition: all 0.2s linear;
-}
-/*標題按鈕*/
+
+/* 標題按鈕 */
 .A {
-	background-color: #ffcccc;
+  background-color: #ffcccc;
 }
+
 .B {
-	background-color: #b7f274;
+  background-color: #b7f274;
 }
+
 .C {
-	background-color: #aaf0eb;
+  background-color: #aaf0eb;
 }
+
 .D {
-	background-color: #fff8a6;
+  background-color: #fff8a6;
 }
+
 .E {
-	background-color: #e6ccff;
+  background-color: #e6ccff;
 }
+
 .F {
-	background-color: #3F7BE8;
+  background-color: #3F7BE8;
 }
-/*標題按鈕變色*/
 
+/* 標題按鈕變色效果 */
 .elect-w1:hover {
-	color: whitesmoke;
-	background-color: #e62789;
+  color: whitesmoke;
+  background-color: #e62789;
 }
+
 .elect-w2:hover {
-	color: whitesmoke;
-	background-color: #009900;
+  color: whitesmoke;
+  background-color: #009900;
 }
+
 .elect-w3:hover {
-	color: whitesmoke;
-	background-color: #1e87fa;
+  color: whitesmoke;
+  background-color: #1e87fa;
 }
+
 .elect-w4:hover {
-	color: whitesmoke;
-	background-color: #993399;
-}
-.elect-w5 {
-	color: white;
-	background-color: cornflowerblue;
-	padding: 3px 7px;
-	font-size: 24pt;
-}
-/* 複習課次 */
-.audio-area {
-	font-size: 2.1rem;
-    margin: 0.3rem 0 0.6rem -0.5rem ;
-	text: border;
-	color: black;
+  color: whitesmoke;
+  background-color: #993399;
 }
 
-/* 素養小標 */
-.sub {
-  padding: 0.2rem;
-  margin: 0.5rem 0 0.5rem 1rem;
-  font-size: 1.5rem;
-  text-align: center;
-  border-radius: 0.3rem;
-  width: 5.8rem;
-  float: left;
-  color:aliceblue;  
-}
-.list {
-  padding: 0.2rem;
-  margin: 0.5rem 1rem;
-  font-size: 1.5rem;
-  text-align: center;
-  border-radius: 0.3rem;
-  width: 2.2rem;
-  float: left;
-  color:aliceblue;      
-}
 
-.bt-S {
-  margin: 0.5rem 0.5rem -0.5rem 0;
-  font-size: 1.5rem;
-  width: 10rem;
-  height: 2.5rem;
-  background-color:aliceblue;
-  font-weight: bold;
-  border-radius: 0.3rem;
-}
-
-.banner3 {
-	font-size: 2.3rem;
-	padding: 0 1rem 0 1rem;
-	margin: 0rem 1rem 0.5rem 0rem;
-	float: left;
-	font-weight: 600;
-}
-/* 底部設定*/
 footer {
-	margin: 1.5rem 0 2rem 0.3rem;
-	/* padding-bottom: 0.25rem; */
-	position: relative;
+  position: relative;
+  padding: 0.5em 0.5em;
+  display: flex;
+  align-items: center;
+  margin: 0.08rem -0.15rem 0.06rem 0.5rem;
 }
 
 .buttom-img {
-	width: 5rem;
-	float: left;
-	right: 3vw;
-	margin: 0 -0.6rem 0.8rem 1.2rem ;
+  position: relative;
+  width: 6em;
+  margin: 1em 0em 0 1.5em;
+  padding: 0em 0.5em 0 0em;
 }
+
 .buttom-word {
-	color: black;
-	font-size: 1rem;
-	left: 1vw;
-	float: left;
-	margin: 0 0 0 0.3rem;
-}
-/* 反回按鈕*/
-.back-top {
-  z-index: 99999;
-  position: fixed;
-  bottom: 0.3em;
-  right: 0.31em;
-  cursor: pointer;
-  opacity: 0.5;
-  filter: Alpha(opacity=50);
-  width: 1.1em;
-  height: 1.05em;
-  background: #131313 top no-repeat url(./arrow.png);
-  background-size: 0.8em 0.8em;
-  border-radius: 0.25em;
-  border: 1px rgba(255, 255, 255, 0.6) solid;
-  box-shadow: 0px 0px 2px #ffffff;
-  transform: translateY(0%);
-  transition: all 0.2s linear;
+  position: relative;
+  color: black;
+  font-size: 1em;
+  width: auto;
+  margin: 0.9em 0 0em 0;
+  padding: 0 0 0em 0;
 }
 
-.back-top:hover {
-  opacity: 0.8;
-  filter: Alpha(opacity=75);
-  box-shadow: 0px 0px 6px #ffffff;
+
+#nav ul {
+  list-style: none;
+  padding: 0.5em;
+  font-size: 1.3em;
+
 }
 
-.back-top.hide {
-  opacity: 0;
-  filter: Alpha(opacity=0);
-  transform: translateY(150%);
-}
-/* phone */
-@media (max-width: 524px) {
-	header {
-	margin: 0.3em 0;
-	}
-	table {
-	  margin: 0.1em;
-	}
- 	.title-img {
-	 height: 2em;
-     padding: 0 0.2rem 0 0;        
-	}
-	.title-word {
-	  padding: 0.05rem 0.1rem 0.08rem 0.2rem;
-	  font-size: 18pt;
-	}   
-	audio {
-	  width: 100%;
-	  margin: 0 0 0.1rem -0.1rem;
-	  padding: 0.65rem 0.25rem;
-	}
-    section {
-        width: 100%;
-        font-size: 16pt;
-        font-weight: 800; 
-    }
-
-    .banner {
-        color: #000000;
-        padding: 0.1em 0.2em 0.2em 0.2em;
-        margin: 0.1em 0.15em 0.2em 0.15em;
-    }
-    
-	div {
-	  margin: 0.15rem 0.1rem 0.1rem 0.33rem;
-	  font-size: 1.2rem;
-	}
-   p {
-	font-weight: 600;
-	padding-left: 0.3rem;
-    letter-spacing: -0.5px;
-}
-	hr {
-	  border: 0.03em solid rgba(0, 0, 0, 0.00);
-	}
-
-	.bt {
-	  font-size: 0.9rem;
-	  letter-spacing: -1px;
-	  margin: 0.1rem -0.6rem 0.5rem 0.7rem;
-	  width: 4.8rem;
-	  height: 1.6rem;
-	}
-	/* 聽力測驗 */
-	.bt-LS {
-	  font-size: 11pt;
-	  margin: 0.2rem 0 0.2rem 0.1rem;
-	  width: auto;
-	  height: 25px;
-	  padding: 0.2em 0.4rem 0.2em;
-	}
-   footer {
-	margin: 1rem 0.1rem 2rem;
-} 
-	.buttom-img {
-	  width: 3rem;
-      left: 0; 
-      margin: 0 -0.8rem 0.4rem 0.5rem;  
-	}
-	.buttom-word {
-	  font-size: 0.6rem;
-	  left: 2em;
-	  margin: 0.1rem 0 0 0.8rem;     
-	}
-	.elect-w5 {
-	  font-size: 18pt;
-	}
-	.audio-area {
-	  font-size: 20px;
-	}
-    
-	.banner4 {
-	  font-size: 12pt;
-	}
-	.back-top {
-	  bottom: 0.5em;
-	  right: 0.5em;
-	  width: 0.95em;
-	  height: 0.9em;
-	  background-size: 0.63em 0.63em;
-	  border-radius: 0.25em;
-	  border: 1px rgba(255, 255, 255, 0.6) solid;
-	  box-shadow: 0px 0px 1px #ffffff;
-	}
-/* 素養小標 */
-.sub {
-  padding: 0.2rem;
-  margin: 0.3rem 0.5rem;
-  font-size: 1rem;
-  text-align: center;
-  border-radius: 0.3rem;
-  width: 3.8rem;
+#nav ul li {
   float: left;
-}
-.banner3 {
-	font-size: 1.6rem;
-	padding: 0rem 1rem 0.3rem 0.5rem;
-	margin: 0 1rem 0.35rem 0rem;
-	font-weight: 600;
-    letter-spacing: -0.8px;
-}    
-.list {
-  padding: 0.2rem;
-  margin: 0.3rem 0.5rem;
-  font-size: 1rem;
-  border-radius: 0.3rem;
-  width: 1.8rem;
+  line-height: 3.5em;
+  padding-left: 1.5em;
+
 }
 
-.bt-S {
-  margin: 0.3rem 0rem -0.3rem 0.3rem;
-  font-size: 1rem;
-  width: 6rem;
-  height: 1.8rem;
-  background-color:aliceblue;
-  font-weight: bold;
-  border-radius: 0.3rem;
+#nav ul li a,
+#nav ul li span {
+  -moz-transition: background-color .25s ease-in-out;
+  -webkit-transition: background-color .25s ease-in-out;
+  -ms-transition: background-color .25s ease-in-out;
+  transition: background-color .25s ease-in-out;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  color: #696969;
+  text-decoration: none;
+  border-radius: 6px;
+  padding: 0.5em 1.2em 0.5em 1.2em;
+
 }
 
+#nav ul li>ul {
+  display: none;
+
+}
+
+#nav ul li:hover a,
+#nav ul li:hover span {
+  background: #fff;
+}
+
+#nav ul li.active a,
+#nav ul li.active span {
+  background: #fff;
+}
+
+#nav ul li.current a {
+  background: #444;
+  color: #fff;
+}
+
+/* phone */
+
+@media (max-width: 436px) {
+
+  table {
+    margin: 0.6em 0em 0.4em 0.5em;
+  }
+
+  div {
+    margin-left: 0.45em;
+    padding-right: 0.4em;
+    margin-top: 0.1em;
+  }
+
+  p {
+    font-size: 13pt;
+    margin: 0.18em 0 0.1em 0.8em;
+  }
+
+  strong {
+    font-size: 14pt;
+  }
+
+  audio {
+    width: 100%;
+    padding: 0.45em 0 0.45em 0em;
+    margin: 0em 0em 0.35em 0;
+  }
+
+  .title-img {
+    width: 5.5rem;
+    margin-top: 0.15rem;
+    margin-right: -0.45rem;
+  }
+
+  .title-word {
+    padding: 0 0.1rem 0 1rem;
+    font-size: 1.7rem;
+  }
+
+  .banner {
+    font-size: 14pt;
+  }
+
+  .bt {
+    margin: 0.5rem -0.05rem 0.45rem 0.5rem;
+    border: 0.083em solid #F7A277;
+    font-size: 0.4em;
+    width: auto;
+    height: auto;
+    padding: 0.3em 1.5em;
+    border-radius: 0.2rem;
+    box-shadow: -0.6pt -1pt 0 0.045rem #F7A277;
+  }
+
+  .bt:active {
+    box-shadow: -0.1em -0.1em 0.1em 0.043em #F7A277;
+    width: auto;
+    padding: 0.3em 1.5em;
+  }
+
+
+  #nav ul {
+    padding: 0.6em;
+    font-size: 0.5em;
+    letter-spacing: 0.035em;
+  }
+
+
+  #nav ul li {
+    line-height: 6em;
+    padding-left: 0.6em;
+
+  }
+
+  #nav ul li a,
+  #nav ul li span {
+    font-weight: 650;
+    letter-spacing: 0.04em;
+    padding: 0.6em 1.2em 0.6em 1.2em;
+    margin-left: 0.5em;
+  }
+
+  .buttom-img {
+    width: 3.5em;
+    margin: 0.3em 0.1em 0 0;
+  }
+
+  .buttom-word {
+    font-size: 0.5em;
+    margin: 0 0 3em 0;
+  }
 
 
 }
