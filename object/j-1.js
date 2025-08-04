@@ -89,20 +89,42 @@ function loadContentFromCSV(csvPath, lessonId) {
         // ✅ 2. 插入音檔區塊：p + audio + source
         if (item.type === 'audio') {
           console.log('🔊 加入音檔：', item.label, item.src_or_url); 
-          const p = document.createElement('p');
-          p.textContent = item.label;
-
+          const container = document.createElement('div');
+          container.classList.add('audio-block');
+          
+          const label = document.createElement('p');
+          label.textContent = item.label;
+          
+          const loadingText = document.createElement('p');
+          loadingText.textContent = '🎧 音檔載入中...';
+          loadingText.style.color = 'gray';
+          
           const audio = document.createElement('audio');
           audio.controls = true;
-          audio.preload = 'auto'; // 預載完整音檔
-
+          audio.style.display = 'none'; // 先不顯示
+          audio.preload = 'auto';
+          
           const source = document.createElement('source');
           source.src = item.src_or_url;
           source.type = 'audio/mpeg';
           audio.appendChild(source);
+          
+          // 等音檔真正載入完再顯示播放器
+          audio.addEventListener('canplaythrough', () => {
+            loadingText.style.display = 'none';
+            audio.style.display = 'block';
+          });
+          
+          audio.addEventListener('error', () => {
+            loadingText.textContent = '⚠️ 無法載入音檔，請確認網路或來源';
+            loadingText.style.color = 'red';
+          });
+          
+          container.appendChild(label);
+          container.appendChild(loadingText);
+          container.appendChild(audio);
+          target.appendChild(container);
 
-          target.appendChild(p);
-          target.appendChild(audio);
         }
 
         // ✅ 3. 插入連結到 section（讓整個 section 變成可點擊連結）
@@ -138,4 +160,5 @@ function loadContentFromCSV(csvPath, lessonId) {
 window.addEventListener('DOMContentLoaded', () => {
   const lesson = getLessonIdFromFilename();
   loadContentFromCSV('buttons.csv', lesson);
+
 });
