@@ -48,94 +48,102 @@ function getBlockContainer(blockId) {
   return document.getElementById('block' + blockId.replace('a', ''));
 }
 
-function loadContentFromCSV(csvPath, lessonId) {
-  Papa.parse(csvPath, {
-    download: true,
-    header: true,
-    complete: function (results) {
-      const data = results.data;
+function loadContentFromJSON(jsonPath, lessonId) {
+  fetch(jsonPath)
+    .then(res => res.json())
+    .then(data => {
       const filtered = data.filter(item => item.lesson === lessonId);
-
+      
       filtered.forEach(item => {
         let target;
-        
-        // 根據類型決定插入位置
-        if (item.type === 'audio') {
-          // 音檔插入到 aX 區塊中
-          target = document.getElementById(item.block);
-        } else if (item.type === 'button') {
-          // 按鈕插入到 aX 區塊中（不是 blockX）
+
+        if (item.type === 'audio' || item.type === 'button') {
           target = document.getElementById(item.block);
         } else if (item.type === 'link') {
-          // 連結處理不需要 target，直接處理 section
           target = null;
         } else {
-          // 其他類型插入到 blockX 中
           target = getBlockContainer(item.block);
         }
 
         if (!target && item.type !== 'link') return;
 
-        // ✅ 1. 插入按鈕（插入到 aX 區塊中）
+        // ✅ 插入按鈕
         if (item.type === 'button') {
           const btn = document.createElement('button');
           btn.className = 'bt';
           btn.type = 'button';
           btn.textContent = item.label;
-          btn.onclick = () => window.open(item.src_or_url, '_blank');
+          btn.onclick = () => window.open(item.src, '_blank');
           target.appendChild(btn);
         }
 
-        // ✅ 2. 插入音檔區塊：p + audio + source
+        // ✅ 插入音檔
         if (item.type === 'audio') {
-          console.log('🔊 加入音檔：', item.label, item.src_or_url); 
+          const container = document.createElement('div');
+          container.classList.add('audio-block');
+
           const p = document.createElement('p');
           p.textContent = item.label;
 
+          const status = document.createElement('p');
+          status.textContent = '🎧 音檔載入中...';
+          status.className = 'loading';
+          status.style.color = 'gray';
+
           const audio = document.createElement('audio');
           audio.controls = true;
-          audio.preload = 'auto'; // 預載完整音檔
+          audio.preload = 'auto';
+          audio.style.display = 'none';
 
           const source = document.createElement('source');
-          source.src = item.src_or_url;
+          source.src = item.src;
           source.type = 'audio/mpeg';
           audio.appendChild(source);
 
-          target.appendChild(p);
-          target.appendChild(audio);
+          // ✅ 成功載入
+          audio.addEventListener('canplaythrough', () => {
+            status.style.display = 'none';
+            audio.style.display = 'block';
+          });
+
+          // ❌ 失敗載入
+          audio.addEventListener('error', () => {
+            status.textContent = '❌ 無法載入音檔';
+            status.style.color = 'red';
+          });
+
+          container.appendChild(p);
+          container.appendChild(status);
+          container.appendChild(audio);
+          target.appendChild(container);
         }
 
-        // ✅ 3. 插入連結到 section（讓整個 section 變成可點擊連結）
+        // ✅ section 連結
         if (item.type === 'link') {
           const block = getBlockContainer(item.block);
           const section = block?.querySelector('section h1, section p');
-          
           if (section) {
-            // 將 onclick 事件加到 section 標題上
-            section.onclick = () => window.open(item.src_or_url, '_blank');
-            section.style.cursor = 'pointer'; // 加入游標提示
+            section.onclick = () => window.open(item.src, '_blank');
+            section.style.cursor = 'pointer';
           }
         }
-        
       });
-      
-      console.log('CSV 載入完成，重新初始化音檔控制');
-      
-      // 延遲重新初始化，確保所有 DOM 元素都已插入
-      setTimeout(() => {
-        if (typeof window.reinitAudioControl === 'function') {
+
+      // 重新初始化音檔控制（如果你有這個）
+      if (typeof window.reinitAudioControl === 'function') {
+        setTimeout(() => {
           window.reinitAudioControl();
-        }
-      }, 500);
-    },
-    error: function(error) {
-      console.error('CSV 載入錯誤:', error);
-    }
-  });
+        }, 300);
+      }
+    })
+    .catch(err => {
+      console.error('❌ 無法讀取 JSON:', err);
+    });
 }
+
 
 // ⏬ 頁面載入後執行：從檔名抓課次，讀取對應資料
 window.addEventListener('DOMContentLoaded', () => {
-  const lesson = getLessonIdFromFilename();
-  loadContentFromCSV('buttons.csv', lesson);
+  const lesson = getLessonIdFromFilename(); // e.g. "L1"
+  loadContentFromJSON('buttons.json', lesson);
 });
