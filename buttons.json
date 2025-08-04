@@ -5,9 +5,9 @@
   {"lesson": "L1","block": "a2","type": "button","label": "無字幕","src": "https://ltn.tw/TbJMDgh"},
   {"lesson": "L1","block": "a2","type": "button","label": "英文字幕","src": "https://ltn.tw/OK25j2m"},
   {"lesson": "L1","block": "a2","type": "button","label": "中英字幕","src": "https://ltn.tw/6CxOobu"},
-  {"lesson": "L1","block": "a3","type": "audio","label": "第 1 段 Reading Selection-normal","src": "./mp3/001.mp3"},
-  {"lesson": "L1","block": "a3","type": "audio","label": "第 2 段 Reading Selection-normal","src": "./mp3/002.mp3"},
-  {"lesson": "L1","block": "a3","type": "audio","label": "第 3 段 Reading Selection-normal","src": "./mp3/003.mp3"},
+  {"lesson": "L1","block": "a3","type": "audio","label": "第 1 段 Reading Selection-normal","src": "mp3/001.mp3"},
+  {"lesson": "L1","block": "a3","type": "audio","label": "第 2 段 Reading Selection-normal","src": "mp3/002.mp3"},
+  {"lesson": "L1","block": "a3","type": "audio","label": "第 3 段 Reading Selection-normal","src": "mp3/003.mp3"},
   {"lesson": "L1","block": "a3","type": "audio","label": "第 4 段 Reading Selection-normal","src": "./mp3/004.mp3"},
   {"lesson": "L1","block": "a3","type": "audio","label": "第 5 段 Reading Selection-normal","src": "./mp3/005.mp3"},
   {"lesson": "L1","block": "a3","type": "audio","label": "第 6 段 Reading Selection-normal","src": "./mp3/006.mp3"},
@@ -263,4 +263,5 @@
   {"lesson": "R3","block": "a3","type": "audio","label": "第 3 段 Reading Selection-slow","src": "./mp3/154.mp3"},
   {"lesson": "R3","block": "a3","type": "audio","label": "第 4 段 Reading Selection-slow","src": "./mp3/155.mp3"},
   {"lesson": "R3","block": "a7","type": "link","label": "","src": "https://ltn.tw/LcG4vnq"}
+
 ]
