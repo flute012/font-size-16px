@@ -100,15 +100,18 @@ function initAudioControl() {
   console.log(`找到 ${audioTracking.elements.length} 個音檔元素`);
   
   if (audioTracking.elements.length === 0) {
-    setTimeout(initAudioControl, 1500);
+    console.log('沒有找到音檔，稍後重試...');
+    // 如果沒有音檔，1秒後重試
+    setTimeout(initAudioControl, 1000);
     return;
   }
   
   // 清除之前的事件監聽器（避免重複綁定）
   audioTracking.elements.forEach((audio, index) => {
     // 創建新的音檔元素來替換（清除舊事件）
-    audio.replaceWith(audio.cloneNode(true));
-    audioTracking.elements[index] = document.querySelectorAll('audio')[index];
+    const newAudio = audio.cloneNode(true);
+    audio.parentNode.replaceChild(newAudio, audio);
+    audioTracking.elements[index] = newAudio;
   });
   
   // 為每個音檔設定事件監聽器
@@ -188,6 +191,4 @@ document.addEventListener('DOMContentLoaded', initAudioControl);
 
 // 全域函數供外部呼叫
 window.reinitAudioControl = forceReinitAudio;
-
 window.audioTracking = audioTracking; // 供除錯使用
-
