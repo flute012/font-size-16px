@@ -109,9 +109,8 @@ function initAudioControl() {
   // 清除之前的事件監聽器（避免重複綁定）
   audioTracking.elements.forEach((audio, index) => {
     // 創建新的音檔元素來替換（清除舊事件）
-    const newAudio = audio.cloneNode(true);
-    audio.parentNode.replaceChild(newAudio, audio);
-    audioTracking.elements[index] = newAudio;
+    audio.replaceWith(audio.cloneNode(true));
+    audioTracking.elements[index] = document.querySelectorAll('audio')[index];
   });
   
   // 為每個音檔設定事件監聽器
@@ -191,4 +190,5 @@ document.addEventListener('DOMContentLoaded', initAudioControl);
 
 // 全域函數供外部呼叫
 window.reinitAudioControl = forceReinitAudio;
+
 window.audioTracking = audioTracking; // 供除錯使用
