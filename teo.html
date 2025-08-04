@@ -1,75 +1,113 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-TW">
 <head>
-  <meta charset="utf-8">
-  <title>JSON 音檔測試</title>
+  <meta charset="UTF-8">
+  <title>JSON & CSV 音檔測試</title>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <style>
     body { font-family: sans-serif; padding: 1rem; }
+    h2 { margin-top: 2rem; border-bottom: 1px solid #ccc; padding-bottom: 0.2rem; }
     .audio-block { margin-bottom: 1.5rem; }
     .loading { color: gray; }
     .error { color: red; }
+    audio { display: block; margin-top: 0.3rem; }
   </style>
 </head>
 <body>
-  <h2>🎧 JSON 音檔載入測試</h2>
-  <div id="audioContainer"></div>
+  <h1>🎧 JSON 與 CSV 音檔載入測試</h1>
 
-  <script>
-    const lessonId = "L1";
+  <div id="json-audio">
+    <h2>🔹 JSON 測試區</h2>
+    <div id="jsonContainer"></div>
+  </div>
 
-    fetch('buttons.json')
-      .then(res => res.json())
-      .then(data => {
-        const container = document.getElementById('audioContainer');
-        const filtered = data.filter(item => item.lesson === lessonId && item.type === 'audio');
+  <div id="csv-audio">
+    <h2>🔸 CSV 測試區</h2>
+    <div id="csvContainer"></div>
+  </div>
 
-        if (filtered.length === 0) {
-          container.innerHTML = "<p>⚠️ 沒有音檔資料</p>";
-          return;
-        }
+<script>
+const lessonId = 'L1';
 
-        filtered.forEach((item, index) => {
-          const block = document.createElement('div');
-          block.className = 'audio-block';
+function createAudioBlock(item) {
+  const block = document.createElement('div');
+  block.className = 'audio-block';
 
-          const label = document.createElement('p');
-          label.textContent = item.label;
+  const label = document.createElement('p');
+  label.textContent = item.label;
 
-          const status = document.createElement('p');
-          status.textContent = '音檔載入中...';
-          status.className = 'loading';
+  const status = document.createElement('p');
+  status.textContent = '音檔載入中...';
+  status.className = 'loading';
 
-          const audio = document.createElement('audio');
-          audio.controls = true;
-          audio.style.display = 'none';
-          audio.preload = 'auto';
+  const audio = document.createElement('audio');
+  audio.controls = true;
+  audio.style.display = 'none';
+  audio.preload = 'auto';
 
-          const source = document.createElement('source');
-          source.src = item.src;
-          source.type = 'audio/mpeg';
-          audio.appendChild(source);
+  const source = document.createElement('source');
+  source.src = item.src || item.src_or_url || '';
+  source.type = 'audio/mpeg';
+  audio.appendChild(source);
 
-          // 載入成功
-          audio.addEventListener('canplaythrough', () => {
-            status.remove();
-            audio.style.display = 'block';
-          });
+  // 事件處理
+  audio.addEventListener('canplaythrough', () => {
+    status.remove();
+    audio.style.display = 'block';
+  });
+  audio.addEventListener('error', () => {
+    status.textContent = '❌ 無法載入音檔';
+    status.className = 'error';
+  });
 
-          // 載入錯誤
-          audio.addEventListener('error', () => {
-            status.textContent = '❌ 無法載入音檔';
-            status.className = 'error';
-          });
+  block.appendChild(label);
+  block.appendChild(status);
+  block.appendChild(audio);
+  return block;
+}
 
-          block.appendChild(label);
-          block.appendChild(status);
-          block.appendChild(audio);
-          container.appendChild(block);
-        });
-      })
-      .catch(err => {
-        document.getElementById('audioContainer').innerHTML = `<p class="error">讀取 JSON 發生錯誤：${err}</p>`;
+// ✅ JSON 音檔載入
+fetch('buttons.json')
+  .then(res => res.json())
+  .then(data => {
+    const filtered = data.filter(item => item.lesson === lessonId && item.type === 'audio');
+    const container = document.getElementById('jsonContainer');
+
+    if (filtered.length === 0) {
+      container.innerHTML = "<p>⚠️ 沒有 JSON 音檔資料</p>";
+    } else {
+      filtered.forEach(item => {
+        const block = createAudioBlock(item);
+        container.appendChild(block);
       });
-  </script>
+    }
+  })
+  .catch(err => {
+    document.getElementById('jsonContainer').innerHTML = `<p class="error">讀取 JSON 發生錯誤：${err}</p>`;
+  });
+
+// ✅ CSV 音檔載入
+Papa.parse('buttons.csv', {
+  download: true,
+  header: true,
+  complete: function (results) {
+    const data = results.data;
+    const filtered = data.filter(item => item.lesson === lessonId && item.type === 'audio');
+    const container = document.getElementById('csvContainer');
+
+    if (filtered.length === 0) {
+      container.innerHTML = "<p>⚠️ 沒有 CSV 音檔資料</p>";
+    } else {
+      filtered.forEach(item => {
+        const block = createAudioBlock(item);
+        container.appendChild(block);
+      });
+    }
+  },
+  error: function (err) {
+    document.getElementById('csvContainer').innerHTML = `<p class="error">讀取 CSV 發生錯誤：${err}</p>`;
+  }
+});
+</script>
 </body>
 </html>
