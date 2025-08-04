@@ -100,9 +100,7 @@ function initAudioControl() {
   console.log(`找到 ${audioTracking.elements.length} 個音檔元素`);
   
   if (audioTracking.elements.length === 0) {
-    console.log('沒有找到音檔，稍後重試...');
-    // 如果沒有音檔，1秒後重試
-    setTimeout(initAudioControl, 1000);
+    setTimeout(initAudioControl, 1500);
     return;
   }
   
@@ -192,3 +190,4 @@ document.addEventListener('DOMContentLoaded', initAudioControl);
 window.reinitAudioControl = forceReinitAudio;
 
 window.audioTracking = audioTracking; // 供除錯使用
+
