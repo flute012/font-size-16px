@@ -48,16 +48,30 @@ function getBlockContainer(blockId) {
   return document.getElementById('block' + blockId.replace('a', ''));
 }
 
-function loadContentFromJSON(jsonPath, lessonId) {
-  fetch(jsonPath)
-    .then(res => res.json())
-    .then(data => {
+function loadContentFromCSV(csvPath, lessonId) {
+  Papa.parse(csvPath, {
+    download: true,
+    header: true,
+    complete: function (results) {
+      const data = results.data;
       const filtered = data.filter(item => item.lesson === lessonId);
-      
+
+      const audioMap = {}; // 儲存所有區塊的音檔清單
+
       filtered.forEach(item => {
         let target;
 
-        if (item.type === 'audio' || item.type === 'button') {
+        // 處理音檔資料，不立即插入 DOM
+        if (item.type === 'audio') {
+          if (!audioMap[item.block]) {
+            audioMap[item.block] = [];
+          }
+          audioMap[item.block].push({ label: item.label, src: item.src_or_url });
+          return;
+        }
+
+        // 其餘類型正常插入
+        if (item.type === 'button') {
           target = document.getElementById(item.block);
         } else if (item.type === 'link') {
           target = null;
@@ -73,77 +87,79 @@ function loadContentFromJSON(jsonPath, lessonId) {
           btn.className = 'bt';
           btn.type = 'button';
           btn.textContent = item.label;
-          btn.onclick = () => window.open(item.src, '_blank');
+          btn.onclick = () => window.open(item.src_or_url, '_blank');
           target.appendChild(btn);
         }
 
-        // ✅ 插入音檔
-        if (item.type === 'audio') {
-          const container = document.createElement('div');
-          container.classList.add('audio-block');
-
-          const p = document.createElement('p');
-          p.textContent = item.label;
-
-          const status = document.createElement('p');
-          status.textContent = '🎧 音檔載入中...';
-          status.className = 'loading';
-          status.style.color = 'gray';
-
-          const audio = document.createElement('audio');
-          audio.controls = true;
-          audio.preload = 'auto';
-          audio.style.display = 'none';
-
-          const source = document.createElement('source');
-          source.src = item.src;
-          source.type = 'audio/mpeg';
-          audio.appendChild(source);
-
-          // ✅ 成功載入
-          audio.addEventListener('canplaythrough', () => {
-            status.style.display = 'none';
-            audio.style.display = 'block';
-          });
-
-          // ❌ 失敗載入
-          audio.addEventListener('error', () => {
-            status.textContent = '❌ 無法載入音檔';
-            status.style.color = 'red';
-          });
-
-          container.appendChild(p);
-          container.appendChild(status);
-          container.appendChild(audio);
-          target.appendChild(container);
-        }
-
-        // ✅ section 連結
+        // ✅ 插入超連結
         if (item.type === 'link') {
           const block = getBlockContainer(item.block);
           const section = block?.querySelector('section h1, section p');
           if (section) {
-            section.onclick = () => window.open(item.src, '_blank');
+            section.onclick = () => window.open(item.src_or_url, '_blank');
             section.style.cursor = 'pointer';
           }
         }
       });
 
-      // 重新初始化音檔控制（如果你有這個）
-      if (typeof window.reinitAudioControl === 'function') {
-        setTimeout(() => {
-          window.reinitAudioControl();
-        }, 300);
-      }
-    })
-    .catch(err => {
-      console.error('❌ 無法讀取 JSON:', err);
-    });
+      // ✅ 延後處理所有 audioMap 音檔（單一播放器 + 假播放條）
+      Object.keys(audioMap).forEach(blockId => {
+        const target = document.getElementById(blockId);
+        const audioList = audioMap[blockId];
+        if (!target || !audioList || audioList.length === 0) return;
+
+        const trigger = document.createElement('div');
+        trigger.className = 'fake-audio';
+        trigger.innerHTML = `
+          <div class="play-icon"></div>
+          <span>點擊播放 ${audioList.length} 段音檔</span>
+        `;
+
+        const nowPlaying = document.createElement('p');
+        nowPlaying.textContent = '';
+        nowPlaying.style.fontSize = '0.95em';
+        nowPlaying.style.color = '#666';
+
+        trigger.onclick = () => {
+          const audio = document.createElement('audio');
+          audio.controls = true;
+          audio.preload = 'auto';
+          const source = document.createElement('source');
+          source.type = 'audio/mpeg';
+          audio.appendChild(source);
+
+          let current = 0;
+          const playNext = () => {
+            if (current >= audioList.length) return;
+            const item = audioList[current];
+            nowPlaying.textContent = `▶ 正在播放：${item.label}`;
+            source.src = item.src;
+            audio.load();
+            audio.play();
+            current++;
+          };
+
+          audio.onended = playNext;
+          playNext();
+
+          trigger.replaceWith(audio);
+        };
+
+        target.appendChild(trigger);
+        target.appendChild(nowPlaying);
+      });
+
+      console.log('✅ CSV 音檔載入完成');
+    },
+    error: function (error) {
+      console.error('CSV 載入錯誤:', error);
+    }
+  });
 }
 
 
 // ⏬ 頁面載入後執行：從檔名抓課次，讀取對應資料
 window.addEventListener('DOMContentLoaded', () => {
-  const lesson = getLessonIdFromFilename(); // e.g. "L1"
-  loadContentFromJSON('buttons.json', lesson);
+  const lesson = getLessonIdFromFilename();
+  loadContentFromCSV('buttons.csv', lesson);
 });
