@@ -199,168 +199,110 @@ footer {
   color: #fff;
 }
 
-/* iOS 假播放器樣式 */
-.fake-audio-player {
-  background: #f5f5f5;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 12px 16px;
-  margin: 8px 0;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  min-height: 50px;
-}
-
-.fake-audio-player:hover {
-  background: #e8e8e8;
-  border-color: #999;
-}
-
-.fake-audio-player.playing {
-  background: #e3f2fd;
-  border-color: #2196f3;
-  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.2);
-}
-
-.fake-play-button {
-  background: none;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 50%;
-  min-width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-}
-
-.fake-play-button:hover {
-  background: rgba(0, 0, 0, 0.1);
-}
-
-.fake-player-title {
-  font-weight: 500;
-  color: #333;
-  flex: 1;
-  min-width: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.fake-progress-container {
-  flex: 2;
-  min-width: 100px;
-}
-
-.fake-progress-bar {
-  width: 100%;
-  height: 6px;
-  background: #ddd;
-  border-radius: 3px;
-  overflow: hidden;
-  position: relative;
-}
-
-.fake-progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #2196f3, #1976d2);
-  width: 0%;
-  transition: width 0.1s linear;
-  border-radius: 3px;
-}
-
-.fake-player-status {
-  font-size: 12px;
-  color: #666;
-  min-width: 80px;
-  text-align: right;
-  font-family: monospace;
-}
-
-.fake-audio-player.playing .fake-player-status {
-  color: #2196f3;
-  font-weight: 500;
-}
-
-/* 音檔容器樣式 */
+/* iOS 音檔控制樣式 */
 .audio-container {
   margin: 12px 0;
+  padding: 8px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #fafafa;
 }
 
-/* 音檔標題樣式 */
 .audio-title {
   margin: 0 0 8px 0;
   font-weight: 500;
   color: #333;
+  font-size: 14px;
 }
 
-/* 隱藏 iOS 真實播放器 */
-.ios-hidden {
-  display: none !important;
+/* iOS 取消靜音按鈕 */
+.unmute-button {
+  display: block;
+  width: 100%;
+  padding: 8px 16px;
+  margin: 8px 0;
+  background: linear-gradient(135deg, #ff9800, #f57c00);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(255, 152, 0, 0.3);
+}
+
+.unmute-button:hover {
+  background: linear-gradient(135deg, #f57c00, #ef6c00);
+  box-shadow: 0 4px 8px rgba(255, 152, 0, 0.4);
+  transform: translateY(-1px);
+}
+
+.unmute-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(255, 152, 0, 0.3);
+}
+
+/* 音檔播放器樣式優化 */
+audio {
+  width: 100%;
+  margin: 4px 0;
+  border-radius: 4px;
+}
+
+/* iOS Safari 音檔播放器優化 */
+audio::-webkit-media-controls-panel {
+  background-color: #f5f5f5;
+}
+
+audio::-webkit-media-controls-current-time-display,
+audio::-webkit-media-controls-time-remaining-display {
+  font-size: 12px;
 }
 
 /* 響應式設計 */
 @media (max-width: 768px) {
-  .fake-audio-player {
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 10px 12px;
+  .audio-container {
+    margin: 8px 0;
+    padding: 6px;
   }
   
-  .fake-player-title {
-    flex: 1 1 100%;
-    margin-bottom: 4px;
+  .audio-title {
+    font-size: 13px;
   }
   
-  .fake-progress-container {
-    flex: 1;
-    min-width: 120px;
-  }
-  
-  .fake-player-status {
-    min-width: 70px;
-    font-size: 11px;
+  .unmute-button {
+    padding: 6px 12px;
+    font-size: 13px;
   }
 }
 
-/* 載入狀態樣式 */
-.fake-player-status.loading {
+/* 載入狀態提示 */
+.audio-container.loading {
+  border-color: #2196f3;
+  background: #e3f2fd;
+}
+
+.audio-container.loading::before {
+  content: "載入中...";
+  display: block;
+  color: #2196f3;
+  font-size: 12px;
+  margin-bottom: 4px;
   animation: pulse 1.5s ease-in-out infinite;
-  color: #ff9800;
 }
 
-.fake-player-status.ready {
-  color: #4caf50;
-  font-weight: 500;
-}
-
-.fake-player-status.error {
-  color: #f44336;
-  font-weight: 500;
-}
-
-.fake-audio-player.ready {
-  border-color: #4caf50;
-  cursor: pointer;
-}
-
-.fake-audio-player.ready:hover {
-  background: #f1f8e9;
-  border-color: #4caf50;
-  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
-}
-
-.fake-audio-player.error {
+.audio-container.error {
   border-color: #f44336;
   background: #ffebee;
-  cursor: not-allowed;
+}
+
+.audio-container.error::before {
+  content: "載入失敗";
+  display: block;
+  color: #f44336;
+  font-size: 12px;
+  margin-bottom: 4px;
 }
 
 @keyframes pulse {
@@ -369,21 +311,58 @@ footer {
   100% { opacity: 1; }
 }
 
-/* 播放中的閃爍動畫 */
-.fake-audio-player.playing .fake-progress-fill {
-  box-shadow: 0 0 10px rgba(33, 150, 243, 0.3);
+/* 成功啟用音檔後的樣式 */
+.audio-container.enabled {
+  border-color: #4caf50;
+  background: #f1f8e9;
 }
 
-/* 錯誤狀態 */
-.fake-audio-player .fake-play-button:has-text("❌") {
-  color: #f44336;
+.audio-container.enabled .audio-title {
+  color: #2e7d32;
 }
 
-.fake-audio-player:has(.fake-play-button:has-text("❌")) {
-  background: #ffebee;
-  border-color: #f44336;
+/* iOS 專用提示 */
+.ios-audio-hint {
+  background: #fff3e0;
+  border: 1px solid #ffb74d;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin: 12px 0;
+  font-size: 13px;
+  color: #e65100;
+  display: none;
 }
 
+.ios-device .ios-audio-hint {
+  display: block;
+}
+
+/* 音檔控制增強 */
+.audio-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.audio-controls button {
+  padding: 4px 8px;
+  font-size: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.audio-controls button:hover {
+  background: #f0f0f0;
+  border-color: #999;
+}
+
+.audio-controls button:active {
+  background: #e0e0e0;
+}
 /* phone */
 
 @media (max-width: 436px) {
@@ -480,4 +459,5 @@ footer {
 
 
 }
+
 
