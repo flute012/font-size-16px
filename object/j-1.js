@@ -1,4 +1,4 @@
-//  預設關閉區塊 (a) - 但排除需要預設打開的
+//  預設關閉區塊 (a)
 window.onload = function () {
   for (var i = 1; i <= 9; i++) {
     const element = document.getElementById("a" + i);
@@ -140,3 +140,4 @@ window.addEventListener('DOMContentLoaded', () => {
   loadContentFromCSV('buttons.csv', lesson);
 
 });
+
