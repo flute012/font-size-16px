@@ -6,17 +6,17 @@ L1,a2,button,無字幕,https://ltn.tw/TbJMDgh
 L1,a2,button,英文字幕,https://ltn.tw/OK25j2m
 L1,a2,button,中英字幕,https://ltn.tw/6CxOobu
 L1,a3,audio,第 1 段 Reading Selection-normal,/mp3/001.mp3|/m4a/001.m4a
-L1,a3,audio,第 2 段 Reading Selection-normal,./mp3/002.mp3|./m4a/002.m4a
-L1,a3,audio,第 3 段 Reading Selection-normal,./mp3/003.mp3|./m4a/003.m4a
-L1,a3,audio,第 4 段 Reading Selection-normal,./mp3/004.mp3|./m4a/004.m4a
-L1,a3,audio,第 5 段 Reading Selection-normal,./mp3/005.mp3|./m4a/005.m4a
-L1,a3,audio,第 6 段 Reading Selection-normal,./mp3/006.mp3|./m4a/006.m4a
-L1,a3,audio,第 1 段 Reading Selection-slow,./mp3/007.mp3|./m4a/007.m4a
-L1,a3,audio,第 2 段 Reading Selection-slow,./mp3/008.mp3|./m4a/008.m4a
-L1,a3,audio,第 3 段 Reading Selection-slow,./mp3/009.mp3
-L1,a3,audio,第 4 段 Reading Selection-slow,./mp3/010.mp3
-L1,a3,audio,第 5 段 Reading Selection-slow,./mp3/011.mp3
-L1,a3,audio,第 6 段 Reading Selection-slow,./mp3/012.mp3
+L1,a3,audio,第 2 段 Reading Selection-normal,/mp3/002.mp3|/m4a/002.m4a
+L1,a3,audio,第 3 段 Reading Selection-normal,/mp3/003.mp3|/m4a/003.m4a
+L1,a3,audio,第 4 段 Reading Selection-normal,/mp3/004.mp3|/m4a/004.m4a
+L1,a3,audio,第 5 段 Reading Selection-normal,/mp3/005.mp3|/m4a/005.m4a
+L1,a3,audio,第 6 段 Reading Selection-normal,/mp3/006.mp3|/m4a/006.m4a
+L1,a3,audio,第 1 段 Reading Selection-slow,/mp3/007.mp3|/m4a/007.m4a
+L1,a3,audio,第 2 段 Reading Selection-slow,/mp3/008.mp3|/m4a/008.m4a
+L1,a3,audio,第 3 段 Reading Selection-slow,/mp3/009.mp3
+L1,a3,audio,第 4 段 Reading Selection-slow,/mp3/010.mp3
+L1,a3,audio,第 5 段 Reading Selection-slow,/mp3/011.mp3
+L1,a3,audio,第 6 段 Reading Selection-slow,/mp3/012.mp3
 L1,a4,link,,https://ltn.tw/H8f7mOO
 L1,a5,link,,https://ltn.tw/3EB9Z9g
 L1,a6,audio,Words for Production 1 ~ 10,./mp3/013.mp3
@@ -263,5 +263,6 @@ R3,a3,audio,第 2 段 Reading Selection-slow,./mp3/153.mp3
 R3,a3,audio,第 3 段 Reading Selection-slow,./mp3/154.mp3
 R3,a3,audio,第 4 段 Reading Selection-slow,./mp3/155.mp3
 R3,a7,link,,https://ltn.tw/LcG4vnq
+
 
 
