@@ -199,30 +199,88 @@ footer {
   color: #fff;
 }
 
-.fake-audio {
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 0.5em 1em;
-  display: inline-flex;
+/* 假播放器樣式 - 只在 iOS 顯示 */
+.fake-audio-player {
+  display: flex;
   align-items: center;
-  gap: 0.5em;
-  background-color: #f9f9f9;
-  color: #888;
-  font-size: 0.95em;
+  background: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 8px 12px;
+  margin: 8px 0;
+  width: 300px;
+  height: 40px;
   cursor: pointer;
-  width: fit-content;
-  margin: 0.3rem 0;
+  transition: background-color 0.2s;
 }
 
-.fake-audio .play-icon {
+.fake-audio-player:hover {
+  background: #e8e8e8;
+}
+
+.fake-audio-player:active {
+  background: #d8d8d8;
+}
+
+.fake-play-button {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #666;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.fake-play-button::after {
+  content: '';
   width: 0;
   height: 0;
-  border-top: 8px solid transparent;
-  border-bottom: 8px solid transparent;
-  border-left: 12px solid #666;
+  border-left: 8px solid white;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  margin-left: 2px;
 }
 
+.fake-progress-bar {
+  flex: 1;
+  height: 4px;
+  background: #ddd;
+  border-radius: 2px;
+  margin-right: 12px;
+  position: relative;
+}
 
+.fake-progress-bar::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 0%;
+  background: #666;
+  border-radius: 2px;
+}
+
+.fake-player-hint {
+  font-size: 11px;
+  color: #888;
+  white-space: nowrap;
+}
+
+/* 隱藏真實的 audio 元素（在 iOS 上） */
+.ios-device audio.replaced {
+  display: none;
+}
+
+/* 真實播放器顯示時隱藏假播放器 */
+.fake-audio-player.hidden {
+  display: none;
+}
 
 /* phone */
 
@@ -316,6 +374,7 @@ footer {
     font-size: 0.5em;
     margin: 0 0 3em 0;
   }
+
 
 
 }
