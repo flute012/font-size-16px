@@ -96,15 +96,25 @@ function loadContentFromCSV(csvPath, lessonId) {
             audio.controls = true;
             audio.preload = 'none';
           
-          const mp3Path = item.src_or_url.split('|').map(s => s.trim())[0]; // ✅ 取第一個音檔（mp3）
-          
-          if (mp3Path) {
-            const sourceMp3 = document.createElement('source');
-            sourceMp3.src = mp3Path;
-            sourceMp3.type = 'audio/mpeg';
-            audio.appendChild(sourceMp3);
-          }
+          const source = document.createElement('source');
+          source.src = item.src_or_url;
+          source.type = 'audio/mpeg';
+          audio.appendChild(source);
 
+          // 建立一個按鈕，讓使用者點擊
+          const playButton = document.createElement('button');
+          playButton.textContent = '播放音訊';
+          
+          // 綁定點擊事件
+          playButton.addEventListener('click', () => {
+            // 在使用者點擊後，才觸發載入和播放
+            audio.load();
+            audio.play();
+          
+            // 播放後，可以隱藏或移除這個按鈕
+            playButton.style.display = 'none';
+          });
+          
             audio.onerror = () => {
               const warn = document.createElement('p');
               warn.textContent = '⚠️ 音檔載入失敗';
@@ -155,4 +165,5 @@ window.addEventListener('DOMContentLoaded', () => {
   loadContentFromCSV('buttons.csv', lesson);
 
 });
+
 
