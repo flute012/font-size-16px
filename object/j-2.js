@@ -87,11 +87,28 @@ showPage(page);
 let audioTracking = {
   elements: [],
   currentPlaying: null,
-  initialized: false
+  initialized: false,
+  userInteracted: false
 };
+
+// 檢測瀏覽器類型
+function getBrowserType() {
+  const userAgent = navigator.userAgent;
+  if (userAgent.indexOf('Chrome') > -1 && userAgent.indexOf('Edge') === -1) {
+    return 'chrome';
+  } else if (userAgent.indexOf('Safari') > -1 && userAgent.indexOf('Chrome') === -1) {
+    return 'safari';
+  } else if (userAgent.indexOf('Firefox') > -1) {
+    return 'firefox';
+  }
+  return 'other';
+}
 
 function initAudioControl() {
   console.log('=== 初始化音檔控制 ===');
+  
+  const browserType = getBrowserType();
+  console.log('檢測到瀏覽器:', browserType);
   
   // 重新掃描所有音檔元素
   const audioElements = document.querySelectorAll('audio');
@@ -101,14 +118,26 @@ function initAudioControl() {
   
   if (audioTracking.elements.length === 0) {
     console.log('沒有找到音檔，稍後重試...');
-    // 如果沒有音檔，1秒後重試
     setTimeout(initAudioControl, 1000);
     return;
   }
   
-  // 清除之前的事件監聽器（避免重複綁定）
+  // Chrome 需要使用者互動才能自動播放
+  if (browserType === 'chrome') {
+    // 監聽第一次使用者互動
+    function enableAutoplay() {
+      audioTracking.userInteracted = true;
+      console.log('Chrome: 使用者已互動，啟用自動播放');
+      document.removeEventListener('click', enableAutoplay);
+      document.removeEventListener('touchstart', enableAutoplay);
+    }
+    
+    document.addEventListener('click', enableAutoplay, { once: true });
+    document.addEventListener('touchstart', enableAutoplay, { once: true });
+  }
+  
+  // 清除之前的事件監聽器
   audioTracking.elements.forEach((audio, index) => {
-    // 創建新的音檔元素來替換（清除舊事件）
     const newAudio = audio.cloneNode(true);
     audio.parentNode.replaceChild(newAudio, audio);
     audioTracking.elements[index] = newAudio;
@@ -116,14 +145,27 @@ function initAudioControl() {
   
   // 為每個音檔設定事件監聽器
   audioTracking.elements.forEach((audio, index) => {
-    // 預載音檔
-    audio.preload = 'auto';
+    // 跳過被假播放器替換的音檔
+    if (audio.classList.contains('replaced')) {
+      console.log(`跳過假播放器替換的音檔 ${index + 1}`);
+      return;
+    }
+    
+    // 根據瀏覽器設定預載策略
+    if (browserType === 'chrome') {
+      audio.preload = 'metadata'; // Chrome 較保守的預載
+    } else if (browserType === 'safari') {
+      audio.preload = 'metadata';
+      audio.load();
+    } else {
+      audio.preload = 'auto';
+    }
     
     console.log(`設定音檔 ${index + 1}:`, audio.querySelector('source')?.src);
     
     // 播放事件
     audio.addEventListener('play', function() {
-      console.log(`🎵 開始播放音檔 ${index + 1}`);
+      console.log(`🎵 開始播放音檔 ${index + 1} (${browserType})`);
       audioTracking.currentPlaying = index;
       
       // 暫停所有其他音檔
@@ -135,7 +177,7 @@ function initAudioControl() {
       });
     });
 
-    // 結束事件
+    // 結束事件 - Chrome 特殊處理
     audio.addEventListener('ended', function() {
       console.log(`✅ 音檔 ${index + 1} 播放完畢`);
       
@@ -143,14 +185,29 @@ function initAudioControl() {
       if (index < audioTracking.elements.length - 1) {
         const nextIndex = index + 1;
         const nextAudio = audioTracking.elements[nextIndex];
-        console.log(`🔄 自動播放下一個音檔 ${nextIndex + 1}`);
+        console.log(`🔄 嘗試自動播放下一個音檔 ${nextIndex + 1}`);
         
-        // 使用 setTimeout 確保事件處理完成
-        setTimeout(() => {
-          nextAudio.play().catch(error => {
-            console.error('自動播放失敗:', error);
-          });
-        }, 100);
+        if (browserType === 'chrome') {
+          // Chrome 需要確保使用者已互動
+          if (audioTracking.userInteracted) {
+            setTimeout(() => {
+              nextAudio.play().catch(error => {
+                console.error('Chrome 自動播放失敗:', error.message);
+                // 如果自動播放失敗，顯示提示
+                console.log('請手動點擊播放下一個音檔');
+              });
+            }, 200);
+          } else {
+            console.log('Chrome: 等待使用者互動後才能自動播放');
+          }
+        } else {
+          // 其他瀏覽器正常自動播放
+          setTimeout(() => {
+            nextAudio.play().catch(error => {
+              console.error('自動播放失敗:', error);
+            });
+          }, 100);
+        }
       } else {
         console.log('🏁 所有音檔播放完畢');
         audioTracking.currentPlaying = null;
@@ -161,6 +218,9 @@ function initAudioControl() {
     audio.addEventListener('pause', function() {
       if (!audio.ended && audioTracking.currentPlaying === index) {
         console.log(`⏸️ 音檔 ${index + 1} 被暫停`);
+        if (audioTracking.currentPlaying === index) {
+          audioTracking.currentPlaying = null;
+        }
       }
     });
     
@@ -169,14 +229,45 @@ function initAudioControl() {
       console.error(`❌ 音檔 ${index + 1} 錯誤:`, e);
     });
     
-    // 載入完成
+    // 載入事件
+    audio.addEventListener('loadedmetadata', function() {
+      console.log(`✅ 音檔 ${index + 1} metadata 載入完成`);
+    });
+    
     audio.addEventListener('loadeddata', function() {
-      console.log(`✅ 音檔 ${index + 1} 載入完成`);
+      console.log(`✅ 音檔 ${index + 1} 完整載入完成`);
+    });
+    
+    // Chrome 特殊：監聽 canplaythrough 事件
+    if (browserType === 'chrome') {
+      audio.addEventListener('canplaythrough', function() {
+        console.log(`Chrome: 音檔 ${index + 1} 可以流暢播放`);
+      });
+    }
+    
+    // 阻止事件冒泡
+    audio.addEventListener('loadstart', function(e) {
+      e.stopPropagation();
     });
   });
   
   audioTracking.initialized = true;
   console.log('=== 音檔控制初始化完成 ===');
+}
+
+// 取得目前播放狀態的函數
+function getCurrentPlayingStatus() {
+  if (audioTracking.currentPlaying !== null) {
+    const audio = audioTracking.elements[audioTracking.currentPlaying];
+    return {
+      index: audioTracking.currentPlaying,
+      isPlaying: !audio.paused,
+      currentTime: audio.currentTime,
+      duration: audio.duration,
+      src: audio.querySelector('source')?.src
+    };
+  }
+  return null;
 }
 
 // 強制重新初始化函數
@@ -191,4 +282,5 @@ document.addEventListener('DOMContentLoaded', initAudioControl);
 
 // 全域函數供外部呼叫
 window.reinitAudioControl = forceReinitAudio;
-window.audioTracking = audioTracking; // 供除錯使用
+window.audioTracking = audioTracking;
+window.getCurrentPlayingStatus = getCurrentPlayingStatus;
