@@ -94,7 +94,7 @@ function loadContentFromCSV(csvPath, lessonId) {
 
           const audio = document.createElement('audio');
           audio.controls = true;
-          audio.preload = 'auto'; // 預載完整音檔
+          audio.preload = 'none'; // 預載完整音檔
 
           const source = document.createElement('source');
           source.src = item.src_or_url;
@@ -138,4 +138,5 @@ function loadContentFromCSV(csvPath, lessonId) {
 window.addEventListener('DOMContentLoaded', () => {
   const lesson = getLessonIdFromFilename();
   loadContentFromCSV('buttons.csv', lesson);
+
 });
