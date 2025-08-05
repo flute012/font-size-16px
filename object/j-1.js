@@ -1,174 +1,7 @@
-// 創建假播放器 (iOS 專用) - 修正版
-function createFakeAudioPlayer(label, audioElement) {
-  const fakePlayer = document.createElement('div');
-  fakePlayer.className = 'fake-audio-player';
-  
-  // 播放按鈕
-  const playButton = document.createElement('button');
-  playButton.className = 'fake-play-button';
-  playButton.innerHTML = '▶️'; // 播放圖示
-  
-  // 進度條容器
-  const progressContainer = document.createElement('div');
-  progressContainer.className = 'fake-progress-container';
-  
-  const progressBar = document.createElement('div');
-  progressBar.className = 'fake-progress-bar';
-  
-  const progressFill = document.createElement('div');
-  progressFill.className = 'fake-progress-fill';
-  progressBar.appendChild(progressFill);
-  progressContainer.appendChild(progressBar);
-  
-  // 音檔標題
-  const title = document.createElement('span');
-  title.className = 'fake-player-title';
-  title.textContent = label;
-  
-  // 狀態提示
-  const status = document.createElement('span');
-  status.className = 'fake-player-status';
-  status.textContent = '載入中...';
-  
-  fakePlayer.appendChild(playButton);
-  fakePlayer.appendChild(title);
-  fakePlayer.appendChild(progressContainer);
-  fakePlayer.appendChild(status);
-  
-  // 儲存相關元素的參考
-  fakePlayer._audioElement = audioElement;
-  fakePlayer._playButton = playButton;
-  fakePlayer._progressFill = progressFill;
-  fakePlayer._status = status;
-  fakePlayer._isLoaded = false;
-  fakePlayer._label = label;
-  
-  // 開始檢測音檔載入狀態
-  checkAudioLoadStatus(fakePlayer);
-  
-  // 點擊事件：切換到真實播放器
-  fakePlayer.addEventListener('click', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    if (!fakePlayer._isLoaded) {
-      console.log('音檔尚未載入完成，請稍候');
-      return;
-    }
-    
-    console.log('iOS: 切換到真實播放器 -', label);
-    
-    // 切換到真實播放器模式
-    switchToRealAudioPlayers();
-    
-    // 開始播放這個音檔
-    audioElement.play().then(() => {
-      console.log('開始播放:', label);
-    }).catch(error => {
-      console.error('播放失敗:', error);
-    });
-  });
-  
-  return fakePlayer;
-}
+// iOS Safari 音檔自動播放解決方案
+// 使用 playsinline + muted 實現媒體自動播放
 
-// 檢測音檔載入狀態
-function checkAudioLoadStatus(fakePlayer) {
-  const audioElement = fakePlayer._audioElement;
-  const status = fakePlayer._status;
-  
-  // 設定載入事件監聽器
-  audioElement.addEventListener('loadstart', function() {
-    console.log('開始載入音檔:', fakePlayer._label);
-    status.textContent = '載入中...';
-    status.className = 'fake-player-status loading';
-  });
-  
-  audioElement.addEventListener('loadedmetadata', function() {
-    console.log('音檔 metadata 載入完成:', fakePlayer._label);
-    status.textContent = '準備中...';
-  });
-  
-  audioElement.addEventListener('canplay', function() {
-    console.log('音檔可以播放:', fakePlayer._label);
-    fakePlayer._isLoaded = true;
-    status.textContent = '點擊播放';
-    status.className = 'fake-player-status ready';
-    fakePlayer.classList.add('ready');
-  });
-  
-  audioElement.addEventListener('canplaythrough', function() {
-    console.log('音檔完全載入:', fakePlayer._label);
-    fakePlayer._isLoaded = true;
-    status.textContent = '點擊播放';
-    status.className = 'fake-player-status ready';
-    fakePlayer.classList.add('ready');
-  });
-  
-  audioElement.addEventListener('error', function(e) {
-    console.error('音檔載入錯誤:', fakePlayer._label, e);
-    status.textContent = '載入失敗';
-    status.className = 'fake-player-status error';
-    fakePlayer.classList.add('error');
-    fakePlayer._playButton.innerHTML = '❌';
-  });
-  
-  // 開始載入音檔
-  audioElement.load();
-  
-  // 備用檢查：如果 3 秒後還沒載入完成，再次嘗試
-  setTimeout(() => {
-    if (!fakePlayer._isLoaded && audioElement.readyState >= 3) {
-      console.log('備用檢查：音檔實際已可播放');
-      fakePlayer._isLoaded = true;
-      status.textContent = '點擊播放';
-      status.className = 'fake-player-status ready';
-      fakePlayer.classList.add('ready');
-    }
-  }, 3000);
-}
-
-// 切換到真實播放器模式
-function switchToRealAudioPlayers() {
-  console.log('=== 切換到真實播放器模式 ===');
-  
-  // 找到所有假播放器和對應的真實播放器
-  const fakePlayers = document.querySelectorAll('.fake-audio-player');
-  
-  fakePlayers.forEach(fakePlayer => {
-    const audioElement = fakePlayer._audioElement;
-    const container = fakePlayer.parentNode;
-    
-    // 隱藏假播放器
-    fakePlayer.style.display = 'none';
-    
-    // 顯示真實播放器
-    audioElement.style.display = 'block';
-    audioElement.classList.remove('ios-hidden');
-    
-    // 添加音檔標題（如果還沒有的話）
-    if (!container.querySelector('.audio-title')) {
-      const titleP = document.createElement('p');
-      titleP.className = 'audio-title';
-      titleP.textContent = fakePlayer._label;
-      container.insertBefore(titleP, audioElement);
-    }
-    
-    console.log('顯示真實播放器:', fakePlayer._label);
-  });
-  
-  // 重新初始化音檔控制
-  setTimeout(() => {
-    if (typeof window.reinitAudioControl === 'function') {
-      window.reinitAudioControl();
-    }
-  }, 300);
-  
-  // 標記已切換到真實播放器
-  window.iosAudioSwitched = true;
-}
-
-// 修正後的 loadContentFromCSV 函數中的音檔處理部分
+// 修正後的 loadContentFromCSV 函數
 function loadContentFromCSV(csvPath, lessonId) {
   Papa.parse(csvPath, {
     download: true,
@@ -203,43 +36,50 @@ function loadContentFromCSV(csvPath, lessonId) {
           target.appendChild(btn);
         }
 
-        // 插入音檔區塊 - 修正版
+        // 插入音檔區塊 - iOS 優化版
         if (item.type === 'audio') {
           console.log('🔊 加入音檔：', item.label, item.src_or_url); 
           
           const audioContainer = document.createElement('div');
           audioContainer.className = 'audio-container';
           
+          // 音檔標題
+          const titleP = document.createElement('p');
+          titleP.className = 'audio-title';
+          titleP.textContent = item.label;
+          audioContainer.appendChild(titleP);
+          
+          // 創建音檔元素
           const audio = document.createElement('audio');
           audio.controls = true;
           audio.preload = 'metadata';
+          
+          // iOS Safari 優化設定
+          const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+          if (isIOS) {
+            audio.setAttribute('playsinline', ''); // 允許內聯播放
+            audio.muted = true; // 初始靜音以允許自動播放
+            console.log('iOS 設定：playsinline + muted');
+          }
 
           const source = document.createElement('source');
           source.src = item.src_or_url;
           source.type = 'audio/mpeg';
           audio.appendChild(source);
-
-          // 檢測是否為 iOS 設備且尚未切換到真實播放器
-          const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
           
-          if (isIOS && !window.iosAudioSwitched) {
-            // iOS：創建假播放器
-            const fakePlayer = createFakeAudioPlayer(item.label, audio);
-            audioContainer.appendChild(fakePlayer);
-            audioContainer.appendChild(audio);
-            
-            // 隱藏真實的 audio 元素
-            audio.style.display = 'none';
-            audio.classList.add('ios-hidden');
-          } else {
-            // 非 iOS 或已切換：顯示標題和正常播放器
-            const p = document.createElement('p');
-            p.className = 'audio-title';
-            p.textContent = item.label;
-            audioContainer.appendChild(p);
-            audioContainer.appendChild(audio);
+          // 如果是 iOS，添加取消靜音的控制
+          if (isIOS) {
+            const unmuteButton = document.createElement('button');
+            unmuteButton.className = 'unmute-button';
+            unmuteButton.textContent = '🔊 點擊開啟聲音';
+            unmuteButton.onclick = function() {
+              enableAudioForIOS();
+              this.style.display = 'none';
+            };
+            audioContainer.appendChild(unmuteButton);
           }
           
+          audioContainer.appendChild(audio);
           target.appendChild(audioContainer);
         }
 
@@ -255,12 +95,74 @@ function loadContentFromCSV(csvPath, lessonId) {
         }
       });
       
-      console.log('CSV 載入完成');
+      console.log('CSV 載入完成，重新初始化音檔控制');
+      
+      // 延遲重新初始化，確保所有 DOM 元素都已插入
+      setTimeout(() => {
+        if (typeof window.reinitAudioControl === 'function') {
+          window.reinitAudioControl();
+        }
+        
+        // iOS 專用：預載音檔
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        if (isIOS) {
+          preloadAudioForIOS();
+        }
+      }, 500);
     },
     error: function(error) {
       console.error('CSV 載入錯誤:', error);
     }
   });
+}
+
+// iOS 音檔預載函數
+function preloadAudioForIOS() {
+  console.log('iOS: 開始預載音檔');
+  const audioElements = document.querySelectorAll('audio');
+  
+  audioElements.forEach((audio, index) => {
+    // 載入音檔 metadata
+    audio.load();
+    
+    // 監聽載入事件
+    audio.addEventListener('loadedmetadata', function() {
+      console.log(`iOS 音檔 ${index + 1} 預載完成`);
+    }, { once: true });
+    
+    // 監聽載入錯誤
+    audio.addEventListener('error', function(e) {
+      console.error(`iOS 音檔 ${index + 1} 載入錯誤:`, e);
+    }, { once: true });
+  });
+}
+
+// 啟用 iOS 音檔聲音
+function enableAudioForIOS() {
+  console.log('iOS: 啟用所有音檔聲音');
+  const audioElements = document.querySelectorAll('audio');
+  
+  // 透過使用者互動來取消所有音檔的靜音
+  audioElements.forEach((audio, index) => {
+    audio.muted = false;
+    console.log(`音檔 ${index + 1} 已取消靜音`);
+  });
+  
+  // 隱藏所有取消靜音按鈕
+  const unmuteButtons = document.querySelectorAll('.unmute-button');
+  unmuteButtons.forEach(button => {
+    button.style.display = 'none';
+  });
+  
+  // 標記已啟用聲音
+  window.iosAudioEnabled = true;
+}
+
+// 全域函數：手動啟用音檔（供外部調用）
+function enableAllAudio() {
+  if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+    enableAudioForIOS();
+  }
 }
 
 //  預設關閉區塊 (a) - 但排除需要預設打開的
@@ -273,6 +175,31 @@ window.onload = function () {
         element.style.display = 'none';
       }
     }
+  }
+  
+  // iOS 使用者互動監聽
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  if (isIOS) {
+    // 監聽第一次使用者互動，自動啟用音檔
+    function enableOnFirstInteraction() {
+      if (!window.iosAudioEnabled) {
+        console.log('iOS: 偵測到使用者互動，準備啟用音檔');
+        // 延遲執行，避免過早觸發
+        setTimeout(() => {
+          const audioElements = document.querySelectorAll('audio');
+          if (audioElements.length > 0 && !window.iosAudioEnabled) {
+            console.log('iOS: 自動啟用音檔聲音');
+            enableAudioForIOS();
+          }
+        }, 1000);
+      }
+      // 移除監聽器
+      document.removeEventListener('touchstart', enableOnFirstInteraction);
+      document.removeEventListener('click', enableOnFirstInteraction);
+    }
+    
+    document.addEventListener('touchstart', enableOnFirstInteraction, { once: true });
+    document.addEventListener('click', enableOnFirstInteraction, { once: true });
   }
 }
 
@@ -305,15 +232,40 @@ function showhidediv(id) {
       sbtitle.style.display = 'block';
       console.log(`區塊 ${id} 已打開`);
       
-      // 如果區塊中有音檔且尚未切換到真實播放器，重新檢查載入狀態
-      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-      if (isIOS && !window.iosAudioSwitched) {
-        const fakePlayers = sbtitle.querySelectorAll('.fake-audio-player');
-        fakePlayers.forEach(fakePlayer => {
-          if (!fakePlayer._isLoaded) {
-            checkAudioLoadStatus(fakePlayer);
+      // 檢查是否有音檔需要預載（iOS 特殊處理）
+      const audioElements = sbtitle.querySelectorAll('audio');
+      if (audioElements.length > 0) {
+        console.log(`區塊 ${id} 打開，找到 ${audioElements.length} 個音檔`);
+        
+        // 對 iOS 進行特殊處理
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        if (isIOS) {
+          console.log('檢測到 iOS 設備，預載音檔');
+          audioElements.forEach((audio, index) => {
+            // 確保 iOS 設定正確
+            if (!audio.hasAttribute('playsinline')) {
+              audio.setAttribute('playsinline', '');
+            }
+            if (!window.iosAudioEnabled && !audio.muted) {
+              audio.muted = true;
+            }
+            
+            // 強制載入音檔 metadata
+            audio.load();
+            
+            // 設定預載完成監聽器
+            audio.addEventListener('loadedmetadata', function() {
+              console.log(`iOS 音檔 ${index + 1} 預載完成`);
+            }, { once: true });
+          });
+        }
+        
+        // 延遲重新初始化音檔控制，確保音檔已載入
+        setTimeout(() => {
+          if (typeof window.reinitAudioControl === 'function') {
+            window.reinitAudioControl();
           }
-        });
+        }, 300);
       }
     } else {
       // 關閉區塊
@@ -336,7 +288,10 @@ function getBlockContainer(blockId) {
 }
 
 // 初始化全域變數
-window.iosAudioSwitched = false;
+window.iosAudioEnabled = false;
+
+// 暴露全域函數
+window.enableAllAudio = enableAllAudio;
 
 // ⏬ 頁面載入後執行
 window.addEventListener('DOMContentLoaded', () => {
