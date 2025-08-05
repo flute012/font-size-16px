@@ -96,24 +96,20 @@ function loadContentFromCSV(csvPath, lessonId) {
             audio.controls = true;
             audio.preload = 'none';
           
-            const [mp3Path, m4aPath] = item.src_or_url.split('|').map(s => s.trim());
+          const mp3Path = item.src_or_url.split('|').map(s => s.trim())[0]; // ✅ 取第一個音檔（mp3）
           
-            if (m4aPath) {
-              const sourceM4a = document.createElement('source');
-              sourceM4a.src = m4aPath;
-              sourceM4a.type = 'audio/mp4'; // MIME type for m4a
-              audio.appendChild(sourceM4a);
-            }
-          
-            if (mp3Path) {
-              const sourceMp3 = document.createElement('source');
-              sourceMp3.src = mp3Path;
-              sourceMp3.type = 'audio/mpeg';
-              audio.appendChild(sourceMp3);
-            }
-          
-            const fallback = document.createElement('p');
-            fallback.textContent = '⚠️ 您的瀏覽器不支援音訊播放';
+          if (mp3Path) {
+            const sourceMp3 = document.createElement('source');
+            sourceMp3.src = mp3Path;
+            sourceMp3.type = 'audio/mpeg';
+            audio.appendChild(sourceMp3);
+          }
+
+            audio.onerror = () => {
+              const warn = document.createElement('p');
+              warn.textContent = '⚠️ 音檔載入失敗';
+              audio.parentNode?.appendChild(warn);
+            };
           
             const target = document.getElementById(item.block);
             if (target) {
@@ -148,7 +144,7 @@ function loadContentFromCSV(csvPath, lessonId) {
       }, 500);
     },
     error: function(error) {
-      console.error('CSV 載入錯誤:', error);
+      console.error('資料載入錯誤:', error);
     }
   });
 }
@@ -159,3 +155,4 @@ window.addEventListener('DOMContentLoaded', () => {
   loadContentFromCSV('buttons.csv', lesson);
 
 });
+
