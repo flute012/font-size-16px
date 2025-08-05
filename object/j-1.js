@@ -138,7 +138,10 @@ function loadContentFromCSV(csvPath, lessonId) {
             audio.play();
             current++;
           };
-
+            audio.onerror = () => {
+              nowPlaying.textContent = `⚠️ 音檔載入失敗：${item.label}`;
+            };
+          
           audio.onended = playNext;
           playNext();
 
@@ -162,4 +165,5 @@ function loadContentFromCSV(csvPath, lessonId) {
 window.addEventListener('DOMContentLoaded', () => {
   const lesson = getLessonIdFromFilename();
   loadContentFromCSV('buttons.csv', lesson);
+
 });
