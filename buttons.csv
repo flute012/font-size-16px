@@ -5,7 +5,7 @@ L1,a1,button,中英字幕,https://ltn.tw/hHUccqz
 L1,a2,button,無字幕,https://ltn.tw/TbJMDgh
 L1,a2,button,英文字幕,https://ltn.tw/OK25j2m
 L1,a2,button,中英字幕,https://ltn.tw/6CxOobu
-L1,a3,audio,第 1 段 Reading Selection-normal,./mp3/001.mp3|./m4a/001.m4a
+L1,a3,audio,第 1 段 Reading Selection-normal,/mp3/001.mp3|/m4a/001.m4a
 L1,a3,audio,第 2 段 Reading Selection-normal,./mp3/002.mp3|./m4a/002.m4a
 L1,a3,audio,第 3 段 Reading Selection-normal,./mp3/003.mp3|./m4a/003.m4a
 L1,a3,audio,第 4 段 Reading Selection-normal,./mp3/004.mp3|./m4a/004.m4a
@@ -263,4 +263,5 @@ R3,a3,audio,第 2 段 Reading Selection-slow,./mp3/153.mp3
 R3,a3,audio,第 3 段 Reading Selection-slow,./mp3/154.mp3
 R3,a3,audio,第 4 段 Reading Selection-slow,./mp3/155.mp3
 R3,a7,link,,https://ltn.tw/LcG4vnq
+
 
