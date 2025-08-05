@@ -93,17 +93,36 @@ function loadContentFromCSV(csvPath, lessonId) {
           p.textContent = item.label;
 
           const audio = document.createElement('audio');
-          audio.controls = true;
-          audio.preload = 'auto'; // 預載完整音檔
+            audio.controls = true;
+            audio.preload = 'none';
+          
+            const [mp3Path, m4aPath] = item.src_or_url.split('|').map(s => s.trim());
+          
+            if (m4aPath) {
+              const sourceM4a = document.createElement('source');
+              sourceM4a.src = m4aPath;
+              sourceM4a.type = 'audio/mp4'; // MIME type for m4a
+              audio.appendChild(sourceM4a);
+            }
+          
+            if (mp3Path) {
+              const sourceMp3 = document.createElement('source');
+              sourceMp3.src = mp3Path;
+              sourceMp3.type = 'audio/mpeg';
+              audio.appendChild(sourceMp3);
+            }
+          
+            const fallback = document.createElement('p');
+            fallback.textContent = '⚠️ 您的瀏覽器不支援音訊播放';
+          
+            const target = document.getElementById(item.block);
+            if (target) {
+              target.appendChild(p);
+              target.appendChild(audio);
+              target.appendChild(fallback);
+            }
+          }
 
-          const source = document.createElement('source');
-          source.src = item.src_or_url;
-          source.type = 'audio/mpeg';
-          audio.appendChild(source);
-
-          target.appendChild(p);
-          target.appendChild(audio);
-        }
 
         // ✅ 3. 插入連結到 section（讓整個 section 變成可點擊連結）
         if (item.type === 'link') {
@@ -138,4 +157,5 @@ function loadContentFromCSV(csvPath, lessonId) {
 window.addEventListener('DOMContentLoaded', () => {
   const lesson = getLessonIdFromFilename();
   loadContentFromCSV('buttons.csv', lesson);
+
 });
