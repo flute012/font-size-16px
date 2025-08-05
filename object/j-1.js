@@ -28,7 +28,7 @@ function createFakeAudioPlayer(label, audioElement) {
   // 狀態提示
   const status = document.createElement('span');
   status.className = 'fake-player-status';
-  status.textContent = '點擊播放';
+  status.textContent = '載入中...';
   
   fakePlayer.appendChild(playButton);
   fakePlayer.appendChild(title);
@@ -40,187 +40,132 @@ function createFakeAudioPlayer(label, audioElement) {
   fakePlayer._playButton = playButton;
   fakePlayer._progressFill = progressFill;
   fakePlayer._status = status;
-  fakePlayer._isActivated = false;
-  fakePlayer._isPlaying = false;
+  fakePlayer._isLoaded = false;
+  fakePlayer._label = label;
   
-  // 點擊事件：啟用真實播放器
+  // 開始檢測音檔載入狀態
+  checkAudioLoadStatus(fakePlayer);
+  
+  // 點擊事件：切換到真實播放器
   fakePlayer.addEventListener('click', function(e) {
     e.preventDefault();
     e.stopPropagation();
     
-    console.log('iOS: 啟用音檔 -', label);
-    
-    // 暫停所有其他正在播放的音檔
-    document.querySelectorAll('.fake-audio-player').forEach(otherPlayer => {
-      if (otherPlayer !== fakePlayer && otherPlayer._isPlaying) {
-        stopFakePlayer(otherPlayer);
-      }
-    });
-    
-    if (!fakePlayer._isActivated) {
-      // 第一次啟用
-      activateFakePlayer(fakePlayer);
-    } else if (fakePlayer._isPlaying) {
-      // 已在播放，暫停
-      pauseFakePlayer(fakePlayer);
-    } else {
-      // 已啟用但暫停，繼續播放
-      resumeFakePlayer(fakePlayer);
+    if (!fakePlayer._isLoaded) {
+      console.log('音檔尚未載入完成，請稍候');
+      return;
     }
+    
+    console.log('iOS: 切換到真實播放器 -', label);
+    
+    // 切換到真實播放器模式
+    switchToRealAudioPlayers();
+    
+    // 開始播放這個音檔
+    audioElement.play().then(() => {
+      console.log('開始播放:', label);
+    }).catch(error => {
+      console.error('播放失敗:', error);
+    });
   });
   
   return fakePlayer;
 }
 
-// 啟用假播放器
-function activateFakePlayer(fakePlayer) {
+// 檢測音檔載入狀態
+function checkAudioLoadStatus(fakePlayer) {
   const audioElement = fakePlayer._audioElement;
+  const status = fakePlayer._status;
   
-  fakePlayer._status.textContent = '載入中...';
-  fakePlayer._playButton.innerHTML = '⏸️';
-  
-  // 載入並播放音檔
-  audioElement.load();
-  
-  const playPromise = audioElement.play();
-  if (playPromise !== undefined) {
-    playPromise.then(() => {
-      console.log('iOS 音檔開始播放');
-      fakePlayer._isActivated = true;
-      fakePlayer._isPlaying = true;
-      fakePlayer._status.textContent = '播放中';
-      fakePlayer.classList.add('playing');
-      
-      // 開始更新進度條
-      updateFakePlayerProgress(fakePlayer);
-      
-    }).catch(error => {
-      console.error('iOS 播放失敗:', error);
-      fakePlayer._status.textContent = '播放失敗';
-      fakePlayer._playButton.innerHTML = '▶️';
-    });
-  }
-  
-  // 設定音檔事件監聽器
-  setupAudioEventListeners(fakePlayer);
-}
-
-// 暫停假播放器
-function pauseFakePlayer(fakePlayer) {
-  const audioElement = fakePlayer._audioElement;
-  audioElement.pause();
-  
-  fakePlayer._isPlaying = false;
-  fakePlayer._playButton.innerHTML = '▶️';
-  fakePlayer._status.textContent = '已暫停';
-  fakePlayer.classList.remove('playing');
-}
-
-// 恢復播放假播放器
-function resumeFakePlayer(fakePlayer) {
-  const audioElement = fakePlayer._audioElement;
-  
-  const playPromise = audioElement.play();
-  if (playPromise !== undefined) {
-    playPromise.then(() => {
-      fakePlayer._isPlaying = true;
-      fakePlayer._playButton.innerHTML = '⏸️';
-      fakePlayer._status.textContent = '播放中';
-      fakePlayer.classList.add('playing');
-      updateFakePlayerProgress(fakePlayer);
-    }).catch(error => {
-      console.error('恢復播放失敗:', error);
-    });
-  }
-}
-
-// 停止假播放器
-function stopFakePlayer(fakePlayer) {
-  const audioElement = fakePlayer._audioElement;
-  audioElement.pause();
-  audioElement.currentTime = 0;
-  
-  fakePlayer._isPlaying = false;
-  fakePlayer._playButton.innerHTML = '▶️';
-  fakePlayer._status.textContent = '已停止';
-  fakePlayer.classList.remove('playing');
-  fakePlayer._progressFill.style.width = '0%';
-}
-
-// 設定音檔事件監聽器
-function setupAudioEventListeners(fakePlayer) {
-  const audioElement = fakePlayer._audioElement;
-  
-  // 播放結束事件
-  audioElement.addEventListener('ended', function() {
-    console.log('音檔播放完畢');
-    fakePlayer._isPlaying = false;
-    fakePlayer._playButton.innerHTML = '▶️';
-    fakePlayer._status.textContent = '播放完畢';
-    fakePlayer.classList.remove('playing');
-    fakePlayer._progressFill.style.width = '100%';
-    
-    // 自動播放下一個音檔
-    setTimeout(() => {
-      playNextAudio(fakePlayer);
-    }, 500);
+  // 設定載入事件監聽器
+  audioElement.addEventListener('loadstart', function() {
+    console.log('開始載入音檔:', fakePlayer._label);
+    status.textContent = '載入中...';
+    status.className = 'fake-player-status loading';
   });
   
-  // 錯誤事件
+  audioElement.addEventListener('loadedmetadata', function() {
+    console.log('音檔 metadata 載入完成:', fakePlayer._label);
+    status.textContent = '準備中...';
+  });
+  
+  audioElement.addEventListener('canplay', function() {
+    console.log('音檔可以播放:', fakePlayer._label);
+    fakePlayer._isLoaded = true;
+    status.textContent = '點擊播放';
+    status.className = 'fake-player-status ready';
+    fakePlayer.classList.add('ready');
+  });
+  
+  audioElement.addEventListener('canplaythrough', function() {
+    console.log('音檔完全載入:', fakePlayer._label);
+    fakePlayer._isLoaded = true;
+    status.textContent = '點擊播放';
+    status.className = 'fake-player-status ready';
+    fakePlayer.classList.add('ready');
+  });
+  
   audioElement.addEventListener('error', function(e) {
-    console.error('音檔錯誤:', e);
-    fakePlayer._status.textContent = '播放錯誤';
+    console.error('音檔載入錯誤:', fakePlayer._label, e);
+    status.textContent = '載入失敗';
+    status.className = 'fake-player-status error';
+    fakePlayer.classList.add('error');
     fakePlayer._playButton.innerHTML = '❌';
   });
   
-  // 時間更新事件
-  audioElement.addEventListener('timeupdate', function() {
-    if (fakePlayer._isPlaying) {
-      updateFakePlayerProgress(fakePlayer);
+  // 開始載入音檔
+  audioElement.load();
+  
+  // 備用檢查：如果 3 秒後還沒載入完成，再次嘗試
+  setTimeout(() => {
+    if (!fakePlayer._isLoaded && audioElement.readyState >= 3) {
+      console.log('備用檢查：音檔實際已可播放');
+      fakePlayer._isLoaded = true;
+      status.textContent = '點擊播放';
+      status.className = 'fake-player-status ready';
+      fakePlayer.classList.add('ready');
     }
+  }, 3000);
+}
+
+// 切換到真實播放器模式
+function switchToRealAudioPlayers() {
+  console.log('=== 切換到真實播放器模式 ===');
+  
+  // 找到所有假播放器和對應的真實播放器
+  const fakePlayers = document.querySelectorAll('.fake-audio-player');
+  
+  fakePlayers.forEach(fakePlayer => {
+    const audioElement = fakePlayer._audioElement;
+    const container = fakePlayer.parentNode;
+    
+    // 隱藏假播放器
+    fakePlayer.style.display = 'none';
+    
+    // 顯示真實播放器
+    audioElement.style.display = 'block';
+    audioElement.classList.remove('ios-hidden');
+    
+    // 添加音檔標題（如果還沒有的話）
+    if (!container.querySelector('.audio-title')) {
+      const titleP = document.createElement('p');
+      titleP.className = 'audio-title';
+      titleP.textContent = fakePlayer._label;
+      container.insertBefore(titleP, audioElement);
+    }
+    
+    console.log('顯示真實播放器:', fakePlayer._label);
   });
-}
-
-// 更新假播放器進度條
-function updateFakePlayerProgress(fakePlayer) {
-  const audioElement = fakePlayer._audioElement;
   
-  if (audioElement.duration && audioElement.currentTime) {
-    const progress = (audioElement.currentTime / audioElement.duration) * 100;
-    fakePlayer._progressFill.style.width = `${progress}%`;
-    
-    // 更新時間顯示
-    const currentMin = Math.floor(audioElement.currentTime / 60);
-    const currentSec = Math.floor(audioElement.currentTime % 60);
-    const totalMin = Math.floor(audioElement.duration / 60);
-    const totalSec = Math.floor(audioElement.duration % 60);
-    
-    fakePlayer._status.textContent = 
-      `${currentMin}:${currentSec.toString().padStart(2, '0')} / ${totalMin}:${totalSec.toString().padStart(2, '0')}`;
-  }
+  // 重新初始化音檔控制
+  setTimeout(() => {
+    if (typeof window.reinitAudioControl === 'function') {
+      window.reinitAudioControl();
+    }
+  }, 300);
   
-  // 如果還在播放，繼續更新
-  if (fakePlayer._isPlaying && !audioElement.paused) {
-    requestAnimationFrame(() => updateFakePlayerProgress(fakePlayer));
-  }
-}
-
-// 播放下一個音檔
-function playNextAudio(currentFakePlayer) {
-  const allFakePlayers = Array.from(document.querySelectorAll('.fake-audio-player'));
-  const currentIndex = allFakePlayers.indexOf(currentFakePlayer);
-  
-  if (currentIndex < allFakePlayers.length - 1) {
-    const nextPlayer = allFakePlayers[currentIndex + 1];
-    console.log('自動播放下一個音檔');
-    
-    // 模擬點擊下一個播放器
-    setTimeout(() => {
-      nextPlayer.click();
-    }, 200);
-  } else {
-    console.log('所有音檔播放完畢');
-  }
+  // 標記已切換到真實播放器
+  window.iosAudioSwitched = true;
 }
 
 // 修正後的 loadContentFromCSV 函數中的音檔處理部分
@@ -274,10 +219,10 @@ function loadContentFromCSV(csvPath, lessonId) {
           source.type = 'audio/mpeg';
           audio.appendChild(source);
 
-          // 檢測是否為 iOS 設備
+          // 檢測是否為 iOS 設備且尚未切換到真實播放器
           const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
           
-          if (isIOS) {
+          if (isIOS && !window.iosAudioSwitched) {
             // iOS：創建假播放器
             const fakePlayer = createFakeAudioPlayer(item.label, audio);
             audioContainer.appendChild(fakePlayer);
@@ -287,8 +232,9 @@ function loadContentFromCSV(csvPath, lessonId) {
             audio.style.display = 'none';
             audio.classList.add('ios-hidden');
           } else {
-            // 非 iOS：顯示標題和正常播放器
+            // 非 iOS 或已切換：顯示標題和正常播放器
             const p = document.createElement('p');
+            p.className = 'audio-title';
             p.textContent = item.label;
             audioContainer.appendChild(p);
             audioContainer.appendChild(audio);
@@ -338,19 +284,19 @@ function showhidediv(id) {
     // 取得當前的顯示狀態
     const currentDisplay = window.getComputedStyle(sbtitle).display;
     
+    // 先暫停所有正在播放的音檔
+    const allAudios = document.querySelectorAll('audio');
+    allAudios.forEach(audio => {
+      if (!audio.paused) {
+        audio.pause();
+      }
+    });
+    
     // 先關閉所有其他區塊
     for (var i = 1; i <= 9; i++) {
       const element = document.getElementById("a" + i);
       if (element && id !== "a" + i) {
         element.style.display = 'none';
-        
-        // 暫停該區塊中所有正在播放的假播放器
-        const fakePlayers = element.querySelectorAll('.fake-audio-player');
-        fakePlayers.forEach(player => {
-          if (player._isPlaying) {
-            pauseFakePlayer(player);
-          }
-        });
       }
     }
     
@@ -358,17 +304,20 @@ function showhidediv(id) {
     if (currentDisplay === 'none') {
       sbtitle.style.display = 'block';
       console.log(`區塊 ${id} 已打開`);
+      
+      // 如果區塊中有音檔且尚未切換到真實播放器，重新檢查載入狀態
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      if (isIOS && !window.iosAudioSwitched) {
+        const fakePlayers = sbtitle.querySelectorAll('.fake-audio-player');
+        fakePlayers.forEach(fakePlayer => {
+          if (!fakePlayer._isLoaded) {
+            checkAudioLoadStatus(fakePlayer);
+          }
+        });
+      }
     } else {
       // 關閉區塊
       sbtitle.style.display = 'none';
-      
-      // 暫停該區塊中所有正在播放的假播放器
-      const fakePlayers = sbtitle.querySelectorAll('.fake-audio-player');
-      fakePlayers.forEach(player => {
-        if (player._isPlaying) {
-          pauseFakePlayer(player);
-        }
-      });
     }
     
   } catch (e) { 
@@ -385,6 +334,9 @@ function getLessonIdFromFilename() {
 function getBlockContainer(blockId) {
   return document.getElementById('block' + blockId.replace('a', ''));
 }
+
+// 初始化全域變數
+window.iosAudioSwitched = false;
 
 // ⏬ 頁面載入後執行
 window.addEventListener('DOMContentLoaded', () => {
